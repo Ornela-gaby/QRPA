@@ -1,0 +1,57 @@
+pipeline{
+
+	agent any
+
+	stages {
+	    
+	    
+	    stage('Cleanupworkdir') {
+
+			steps {
+				sh 'rm -rf QRPA'
+			}
+		}
+	    
+	    stage('Chekout') {
+
+			steps {
+				sh 'git clone https://github.com/Arpakathy/QRPA.git'
+			}
+		}
+	    
+	    
+	    stage('Build') {
+
+			steps {   
+				sh 'docker build -t toukamormela/qrpa:latest QRPA'
+			}
+		}
+		
+		
+		stage('Push') {
+		    
+		    steps { 
+		        
+		        withCredentials([usernamePassword(usernameVariable : 'kath',passwordVariable : 'passwd',credentialsId : 'kathpass' )]) {
+                               sh 'docker login -u $kath -p $passwd'
+                               sh 'docker push toukamormela/qrpa:latest'
+				}
+				
+			}
+		}
+		
+		stage('Deploy') {
+
+			steps {
+				// sh 'aws ecs update-service --cluster KathCluster --service kathService1 --force-new-deployment --region ca-central-1'
+			}
+		}
+		
+		stage('Cleanupimg') {
+
+			steps {
+				sh 'docker rmi -f toukamormela/qrpa:latest'
+			}
+		}
+	}
+}
