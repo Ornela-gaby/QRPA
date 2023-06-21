@@ -15,7 +15,7 @@ pipeline{
 	    stage('Chekout') {
 
 			steps {
-				sh 'git clone https://github.com/Arpakathy/QRPA.git'
+				sh 'git clone https://github.com/Ornela-gaby/QRPA.git'
 			}
 		}
 	    
